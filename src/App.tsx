@@ -2,11 +2,14 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import PageLogin from "./Page/PageLogin/PageLogin";
+import { BrowserRouter } from "react-router-dom";
 
-function App() {
+function App(props: any) {
   return (
     <div>
-      <PageLogin />
+      <BrowserRouter>
+        <PageLogin {...props} />
+      </BrowserRouter>
     </div>
   );
 }
