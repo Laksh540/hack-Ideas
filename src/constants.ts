@@ -16,3 +16,9 @@ export const VALIDATION: Record<
     MESSAGE: "Mandatory",
   },
 };
+
+export type TSortListBy = "UPVOTE_COUNT" | "CREATED_AT";
+export const SORT_LIST_BY: Record<TSortListBy, TSortListBy> = {
+  UPVOTE_COUNT: "UPVOTE_COUNT",
+  CREATED_AT: "CREATED_AT",
+};

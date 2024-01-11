@@ -13,8 +13,11 @@ import { useNavigate } from "react-router-dom";
 interface IFields {
   employeeId: string;
 }
+interface IErrorFields {
+  employeeId: string;
+}
 interface IPageObj extends IFields {
-  error: IFields;
+  error: IErrorFields;
 }
 
 const initialPageObj: IPageObj = {
@@ -77,8 +80,8 @@ const PageLogin = (props: any) => {
   };
 
   // Helper
-  const updateErrorMessage: () => IFields = () => {
-    let updatedErrorMessage: IFields = {
+  const updateErrorMessage: () => IErrorFields = () => {
+    let updatedErrorMessage: IErrorFields = {
       ...initialPageObj.error,
     };
     for (const field of validationFields) {
@@ -105,7 +108,7 @@ const PageLogin = (props: any) => {
         </div>
 
         <button className=" w-full h-8 bg-slate-400" onClick={onLogin}>
-          test
+          Login
         </button>
       </div>
     </div>

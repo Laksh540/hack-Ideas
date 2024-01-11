@@ -1,26 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { HACK_IDEAS, LOGIN_EMPLOYEE_ID, VALIDATION } from "../../constants";
-import {
-  TValidationRuleType,
-  isEmptyField,
-  isFieldValid,
-  showValidationMessage,
-} from "../../commonUtils";
-import { useNavigate } from "react-router-dom";
-import { IHackIdea } from "../PageCreateHackIdea/PageCreateHackIdea";
+import { useEffect, useState } from "react";
+import Chip from "../../components/Chip/Chip";
 import Header from "../../components/Header/Header";
+import {
+  HACK_IDEAS,
+  LOGIN_EMPLOYEE_ID,
+  SORT_LIST_BY,
+  TSortListBy,
+} from "../../constants";
+import {
+  IHackIdea,
+  ITag,
+  IUpVotes,
+} from "../PageCreateHackIdea/PageCreateHackIdea";
+import { useNavigate } from "react-router-dom";
+import { LINK_LOGIN } from "../../routes";
 //  create a component for  input field , button  ,multiselect dropdown
 // validation  for input while login  employeeId should not be empty
 
 interface IPageObj {
   listOfAllIdeas: IHackIdea[];
+  sortBy: TSortListBy | "";
 }
 const initialPageObj: IPageObj = {
   listOfAllIdeas: [],
+  sortBy: "",
 };
 
 const PageHackIdeaListing = (props: any) => {
-  let firstRender = true;
+  const navigate = useNavigate();
   const employeeId = localStorage.getItem(LOGIN_EMPLOYEE_ID) ?? "";
   // const;
   // states
@@ -28,6 +35,12 @@ const PageHackIdeaListing = (props: any) => {
     ...initialPageObj,
   });
   // use effect
+  useEffect(() => {
+    if (!employeeId) {
+      navigate(LINK_LOGIN);
+    }
+  }, []);
+
   useEffect(() => {
     const ideas = localStorage.getItem(HACK_IDEAS);
     let parsedIdeas = JSON.parse(ideas ?? "{}");
@@ -41,12 +54,28 @@ const PageHackIdeaListing = (props: any) => {
   }, []);
 
   useEffect(() => {
-    if (firstRender) {
-      firstRender = false;
-    } else {
-      let updatedList = JSON.stringify(pageObj?.listOfAllIdeas);
-      localStorage.setItem(HACK_IDEAS, updatedList);
+    if (pageObj.sortBy !== "") {
+      setPageObj((prevPageObj) => {
+        let updatedPageObj = { ...prevPageObj };
+        let sortedList;
+        if (prevPageObj.sortBy === SORT_LIST_BY.UPVOTE_COUNT) {
+          sortedList = updatedPageObj.listOfAllIdeas?.sort(
+            (idea1, idea2) => idea2.upVotes.length - idea1.upVotes.length
+          );
+        } else if (prevPageObj.sortBy === SORT_LIST_BY.CREATED_AT) {
+          sortedList = updatedPageObj.listOfAllIdeas?.sort(
+            (idea1, idea2) =>
+              new Date(idea2.createdOn).getTime() -
+              new Date(idea1.createdOn).getTime()
+          );
+        }
+        return updatedPageObj;
+      });
     }
+  }, [pageObj.sortBy]);
+
+  useEffect(() => {
+    console.log("list of ideas", pageObj?.listOfAllIdeas);
   }, [pageObj?.listOfAllIdeas]);
 
   // validations
@@ -66,20 +95,20 @@ const PageHackIdeaListing = (props: any) => {
     console.log("employee id", employeeId);
 
     setPageObj((prevPageObj) => {
-      let updatedPageObj = { ...prevPageObj };
+      let updatedPageObj = structuredClone(prevPageObj);
       const index = updatedPageObj.listOfAllIdeas.findIndex(
-        (idea) => idea.uid === uid
+        (idea: IHackIdea) => idea.uid === uid
       );
       if (index === -1) {
         return updatedPageObj;
       }
       const userUpVote = updatedPageObj.listOfAllIdeas[index]?.upVotes?.find(
-        (upVote) => upVote.employeeId === employeeId
+        (upVote: IUpVotes) => upVote.employeeId === employeeId
       );
       if (userUpVote) {
         updatedPageObj.listOfAllIdeas[index].upVotes =
           updatedPageObj.listOfAllIdeas[index]?.upVotes?.filter(
-            (upVote) => upVote.uid === userUpVote.uid
+            (upVote: IUpVotes) => upVote.uid !== userUpVote.uid
           );
       } else {
         updatedPageObj.listOfAllIdeas[index].upVotes.push({
@@ -88,6 +117,9 @@ const PageHackIdeaListing = (props: any) => {
           employeeId: employeeId,
         });
       }
+
+      let updatedList = JSON.stringify(updatedPageObj?.listOfAllIdeas);
+      localStorage.setItem(HACK_IDEAS, updatedList);
       return updatedPageObj;
     });
   };
@@ -120,14 +152,31 @@ const PageHackIdeaListing = (props: any) => {
 
   return (
     <>
-      <Header />
-      <div className="grid grid-cols-4 ">
-        <div className="mt-4 "></div>
+      <div className="grid grid-cols-4  gap-5 px-8 py-8 ">
+        <div className="col-span-4">
+          <Header />
+        </div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div className="mt-4 ">
+          <div>
+            <select name="sortBy" onChange={handleChange}>
+              <option value="" disabled selected hidden>
+                SortBy
+              </option>
+              <option value={SORT_LIST_BY.UPVOTE_COUNT}>Upvote</option>
+              <option value={SORT_LIST_BY.CREATED_AT}>Create At</option>
+            </select>
+          </div>
+        </div>
         {pageObj.listOfAllIdeas.map((idea: IHackIdea) => (
-          <div className="flex flex-col gap-5 border border-gray-400 rounded-lg">
+          <div className="p-5 flex flex-col gap-5 border border-gray-600 rounded-lg">
             <div>
               <div>
-                <label className="text-sm text-bold mb-1.5">Title</label>
+                <label className="text-sm text-bold text-gray-400 mb-1.5">
+                  Title
+                </label>
               </div>
               <div className="">
                 <span className="text-sm">{idea.title}</span>
@@ -135,18 +184,35 @@ const PageHackIdeaListing = (props: any) => {
             </div>
             <div>
               <div>
-                <label className="text-sm text-bold mb-1.5">Description</label>
+                <label className="text-sm text-bold text-gray-600 mb-1.5">
+                  Description
+                </label>
               </div>
               <div className="">
                 <span className="text-sm">{idea.description}</span>
               </div>
             </div>
+            <div>
+              <div>
+                <label className="text-sm  text-gray-600 text-bold mb-1.5">
+                  Tags
+                </label>
+              </div>
+              <div className="flex flex-wrap">
+                {/* <span className="text-sm">{idea.description}</span> */}
+                {idea?.tags?.map((tag: ITag) => (
+                  <div className="mr-3 mb-3  last-of-type:mr-0">
+                    <Chip label={tag.name} />
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="flex justify-end">
               <div className="w-24">
                 <button
-                  className="text-sm text-bold mr-3"
+                  className="text-sm text-bold mr-3 hover:text-blue-500"
                   onClick={() => onUpVote(idea.uid)}
-                  disabled={userVoted(idea.uid)}
+                  // disabled={userVoted(idea.uid)}
                 >
                   {userVoted(idea.uid) ? "Voted !" : "Up Vote"}
                 </button>

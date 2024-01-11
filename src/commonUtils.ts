@@ -33,9 +33,9 @@ export const showValidationMessage = (
 export const isFieldValid = (value: any, rule: TValidationRuleType) => {
   switch (rule) {
     case VALIDATION.MANDATORY.CODE:
-      return isEmptyField(value) ? true : false;
+      return !isEmptyField(value) ? true : false;
 
     default:
-      return isEmptyField(value) ? true : false;
+      return !isEmptyField(value) ? true : false;
   }
 };
