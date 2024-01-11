@@ -32,10 +32,7 @@ const PageLogin = (props: any) => {
   const navigate = useNavigate();
   // states
   const [pageObj, setPageObj] = useState<IPageObj>({
-    employeeId: "",
-    error: {
-      employeeId: "",
-    },
+    ...initialPageObj,
   });
   // use effect
 

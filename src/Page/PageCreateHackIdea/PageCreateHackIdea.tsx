@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { HACK_IDEAS, VALIDATION } from "../../constants";
+import { HACK_IDEAS, LOGIN_EMPLOYEE_ID, VALIDATION } from "../../constants";
 import {
   TValidationRuleType,
   isEmptyField,
@@ -9,15 +9,19 @@ import {
 import { useNavigate } from "react-router-dom";
 //  create a component for  input field , button  ,multiselect dropdown
 // validation  for input while login  employeeId should not be empty
-interface IEmployeeData {
-  employeeId: string;
-}
 
 export interface IHackIdea {
+  uid: string;
   title: string;
   description: string;
   tags: string;
-  upVotes?: number;
+  upVotes: {
+    uid: string;
+    employeeId: string;
+    createdAt: Date;
+  }[];
+  // isUserUpVote: boolean;
+  createdBy: string;
   createdOn: Date;
 }
 
@@ -122,12 +126,15 @@ const PageLogin = (props: any) => {
   };
 
   const enrichForCreate: () => IHackIdea = () => {
+    let userId = localStorage.getItem(LOGIN_EMPLOYEE_ID);
     const enrichObj: IHackIdea = {
+      uid: Math.floor(10000 + Math.random() * 90000).toString(),
       title: pageObj?.title,
       description: pageObj?.description,
       tags: pageObj?.tags,
       createdOn: new Date(),
-      upVotes: 0,
+      createdBy: JSON.parse(userId ?? "{}") ?? "",
+      upVotes: [],
     };
     return enrichObj;
   };
