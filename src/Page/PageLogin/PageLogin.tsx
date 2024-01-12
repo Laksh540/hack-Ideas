@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { LOGIN_EMPLOYEE_ID, VALIDATION } from "../../constants";
+import {
+  BUTTON_VARIANTS,
+  LOGIN_EMPLOYEE_ID,
+  VALIDATION,
+} from "../../constants";
 import {
   TValidationRuleType,
   isEmptyField,
@@ -7,8 +11,8 @@ import {
   showValidationMessage,
 } from "../../commonUtils";
 import { useNavigate } from "react-router-dom";
-//  create a component for  input field , button  ,multiselect dropdown
-// validation  for input while login  employeeId should not be empty
+import InputBox from "../../components/InputBox";
+import ButtonBox from "../../components/ButtonBox";
 
 interface IFields {
   employeeId: string;
@@ -97,19 +101,18 @@ const PageLogin = (props: any) => {
     <div className="flex justify-center items-center h-lvh">
       <div className="w-96 flex flex-col gap-5">
         <label className="text-center">Hack Ideas</label>
-        <div>
-          <label className="text-center">Employee Id</label>
-          <input
-            className="w-full h-8 "
-            name="employeeId"
-            onChange={handleChange}
-          />
-          <div>{pageObj?.error?.employeeId ?? ""}</div>
-        </div>
-
-        <button className=" w-full h-8 bg-slate-400" onClick={onLogin}>
-          Login
-        </button>
+        <InputBox
+          name="employeeId"
+          label="Employee Id"
+          onChange={handleChange}
+          value={pageObj?.employeeId}
+          validation={pageObj?.error?.employeeId ?? ""}
+        />
+        <ButtonBox
+          label="Login"
+          onClick={onLogin}
+          variant={BUTTON_VARIANTS.PRIMARY}
+        />
       </div>
     </div>
   );

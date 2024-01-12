@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import Chip from "../../components/Chip/Chip";
 import Header from "../../components/Header/Header";
 import {
+  BUTTON_VARIANTS,
   HACK_IDEAS,
   LOGIN_EMPLOYEE_ID,
   SORT_LIST_BY,
+  SORT_LIST_BY_OPTIONS,
   TSortListBy,
 } from "../../constants";
 import {
@@ -14,6 +16,8 @@ import {
 } from "../PageCreateHackIdea/PageCreateHackIdea";
 import { useNavigate } from "react-router-dom";
 import { LINK_LOGIN } from "../../routes";
+import SimpleDropdown from "../../components/SimpleDropdown/SimpleDropdown";
+import ButtonBox from "../../components/ButtonBox/ButtonBox";
 //  create a component for  input field , button  ,multiselect dropdown
 // validation  for input while login  employeeId should not be empty
 
@@ -161,40 +165,43 @@ const PageHackIdeaListing = (props: any) => {
         <div></div>
         <div className="mt-4 ">
           <div>
-            <select name="sortBy" onChange={handleChange}>
-              <option value="" disabled selected hidden>
-                SortBy
-              </option>
-              <option value={SORT_LIST_BY.UPVOTE_COUNT}>Upvote</option>
-              <option value={SORT_LIST_BY.CREATED_AT}>Create At</option>
-            </select>
+            <SimpleDropdown
+              name="sortBy"
+              placeholder="SortBy"
+              options={SORT_LIST_BY_OPTIONS}
+              optionLabel="name"
+              optionValue="code"
+              onChange={handleChange}
+              value={pageObj?.sortBy}
+              hideErrorRow
+            />
           </div>
         </div>
         {pageObj.listOfAllIdeas.map((idea: IHackIdea) => (
           <div className="p-5 flex flex-col gap-5 border border-gray-600 rounded-lg">
             <div>
               <div>
-                <label className="text-sm text-bold text-gray-400 mb-1.5">
+                <label className="text-xs text-bold text-gray-400 mb-1.5 truncate">
                   Title
                 </label>
               </div>
               <div className="">
-                <span className="text-sm">{idea.title}</span>
+                <span className="text-xs">{idea.title}</span>
               </div>
             </div>
             <div>
               <div>
-                <label className="text-sm text-bold text-gray-600 mb-1.5">
+                <label className="text-xs text-bold text-gray-600 mb-1.5">
                   Description
                 </label>
               </div>
-              <div className="">
-                <span className="text-sm">{idea.description}</span>
+              <div className="max-h-96 truncate">
+                <span className="text-xs">{idea.description}</span>
               </div>
             </div>
             <div>
               <div>
-                <label className="text-sm  text-gray-600 text-bold mb-1.5">
+                <label className="text-xs  text-gray-600 text-bold mb-1.5">
                   Tags
                 </label>
               </div>
@@ -207,18 +214,16 @@ const PageHackIdeaListing = (props: any) => {
                 ))}
               </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end items-center">
               <div className="w-24">
-                <button
-                  className="text-sm text-bold mr-3 hover:text-blue-500"
+                <ButtonBox
+                  label={userVoted(idea.uid) ? "Voted !" : "Up Vote"}
                   onClick={() => onUpVote(idea.uid)}
-                  // disabled={userVoted(idea.uid)}
-                >
-                  {userVoted(idea.uid) ? "Voted !" : "Up Vote"}
-                </button>
+                  variant={BUTTON_VARIANTS.TERNARY}
+                />
               </div>
               <div>
-                <label className="text-sm  mb-1.5">
+                <label className="text-xs  mb-1.5">
                   {totalNoOfUpVotes(idea.uid)}
                 </label>
               </div>

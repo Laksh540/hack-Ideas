@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { HACK_IDEAS, LOGIN_EMPLOYEE_ID, VALIDATION } from "../../constants";
+import {
+  BUTTON_VARIANTS,
+  HACK_IDEAS,
+  LOGIN_EMPLOYEE_ID,
+  VALIDATION,
+} from "../../constants";
 import {
   TValidationRuleType,
   isEmptyField,
@@ -8,8 +13,10 @@ import {
 } from "../../commonUtils";
 import { useNavigate } from "react-router-dom";
 // import dropdownArrowIcon from "assets/icons/dropdown-arrow.svg";
-import dropdownArrowIcon from "../../assets/icons/dropdown-arrow.svg";
 import { LINK_HOME, LINK_LOGIN } from "../../routes";
+import MultiSelectDropdown from "../../components/MultiSelectDropdown";
+import InputBox from "../../components/InputBox/InputBox";
+import ButtonBox from "../../components/ButtonBox/ButtonBox";
 //  create a component for  input field , button  ,multiselect dropdown
 // validation  for input while login  employeeId should not be empty
 
@@ -186,57 +193,38 @@ const PageCreateHackIdea = (props: any) => {
     <div className="flex justify-center items-center h-lvh">
       <div className="w-96 flex flex-col gap-5">
         <label className="text-center">Create Hack Idea</label>
-        <div>
-          <label className="text-center">Title</label>
-          <input className="w-full h-8 " name="title" onChange={handleChange} />
-          <div>{pageObj?.error?.title ?? ""}</div>
-        </div>
-        <div>
-          <label className="text-center">Description</label>
-          <input
-            className="w-full h-8 "
-            name="description"
-            onChange={handleChange}
-          />
-          <div>{pageObj?.error?.description ?? ""}</div>
-        </div>
 
-        <div>
-          <label className="text-center">Tags</label>
-          <div className="relative group">
-            <div className="border text-sm p-3 flex justify-between items-center">
-              <div>{pageObj.tags.length} selected</div>
-              <div className=" w-4 h-4">
-                <img src={dropdownArrowIcon} />
-              </div>
-            </div>
-            <ul className="hidden bg-slate-50 group-hover:block absolute hover:flex box-border left-0 w-full list-none  pl-0  ">
-              {TAGS.map((option) => {
-                const isSelected = pageObj.tags.some(
-                  (tag: ITag) => tag.code === option.code
-                );
+        <InputBox
+          name="title"
+          label="Title"
+          onChange={handleChange}
+          value={pageObj?.title}
+          validation={pageObj?.error?.title ?? ""}
+        />
 
-                return (
-                  <li
-                    className=" flex items-center  py-1.5 px-3 cursor-pointer hover:bg-[#eee]"
-                    onClick={() => toggleOption(option)}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isSelected}
-                      className=""
-                    ></input>
-                    <span>{option.name}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          <div>{pageObj?.error?.tags ?? ""}</div>
-        </div>
-        <button className=" w-full h-8 bg-slate-400" onClick={onCreate}>
-          Create
-        </button>
+        <InputBox
+          name="description"
+          label="Description"
+          onChange={handleChange}
+          value={pageObj?.description}
+          validation={pageObj?.error?.description ?? ""}
+        />
+
+        <MultiSelectDropdown
+          options={TAGS}
+          optionLabel="name"
+          optionValue="code"
+          label="Tags"
+          onChange={toggleOption}
+          value={pageObj?.tags}
+          validation={pageObj?.error?.tags}
+        />
+
+        <ButtonBox
+          label="Create"
+          onClick={onCreate}
+          variant={BUTTON_VARIANTS.PRIMARY}
+        />
       </div>
     </div>
   );

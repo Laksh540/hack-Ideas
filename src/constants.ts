@@ -22,3 +22,21 @@ export const SORT_LIST_BY: Record<TSortListBy, TSortListBy> = {
   UPVOTE_COUNT: "UPVOTE_COUNT",
   CREATED_AT: "CREATED_AT",
 };
+
+export const SORT_LIST_BY_OPTIONS: { name: string; code: TSortListBy }[] = [
+  {
+    name: "Upvote count",
+    code: "UPVOTE_COUNT",
+  },
+  {
+    name: "Created at",
+    code: "CREATED_AT",
+  },
+];
+
+export type TButtonVariants = "PRIMARY" | "SECONDARY" | "TERNARY";
+export const BUTTON_VARIANTS: Record<TButtonVariants, TButtonVariants> = {
+  PRIMARY: "PRIMARY",
+  SECONDARY: "SECONDARY",
+  TERNARY: "TERNARY",
+};

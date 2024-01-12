@@ -17,7 +17,7 @@ function App(props: any) {
 
   useEffect(() => {
     setTimeout(() => {
-      if (location.pathname === "") {
+      if (location.pathname === "/") {
         navigate(LINK_LOGIN);
       }
     }, 500);
